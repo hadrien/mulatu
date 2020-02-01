@@ -16,10 +16,18 @@ workflows:
             - isort
             - black
             - test
-          # filters:
-          #   branches:
-          #     only:
-          #       - master
+          filters:
+            branches:
+              only:
+                - master
+  publish:
+    jobs:
+      - publish:
+          filters:
+            tags:
+              only: /^v.*/
+            branches:
+              ignore: /.*/
 
 commands:
   setup:
@@ -45,6 +53,7 @@ jobs:
     executor: python
     steps:
       - setup
+      - export e=$PYPI_TOKEN
       - run: isort --check-only --recursive .
   black:
     executor: python
@@ -77,13 +86,14 @@ jobs:
       - run: git config user.email "hadrien@ectobal.com"
       - run: git config user.name “Hadrien David”
       - run: semantic-release version
-      # - run: git push --follow-tags
-  package-and-deploy:
+      - run: git push --follow-tags
+  publish:
     executor: python
     steps:
       - setup
-      - run: poetry build
-      - run: semantic-release changelog # --post
+      - run: poetry config pypi-token.pypi $PYPI_TOKEN
+      - run: poetry publish --build
+      - run: semantic-release changelog --post
 
 executors:
   python:
