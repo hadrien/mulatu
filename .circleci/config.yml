@@ -17,19 +17,6 @@ workflows:
             branches:
               only:
                 - master
-  publish:
-    jobs:
-      - package-and-deploy:
-          filters:
-            tags:
-              only: /^v.*/
-            branches:
-              ignore: /.*/
-      - build-and-deploy-docs:
-          filters:
-            branches:
-              only:
-                - master
 
 commands:
   setup:
@@ -71,11 +58,8 @@ jobs:
       - setup
       - run: git config user.email "hadrien@ectobal.com"
       - run: git config user.name “Hadrien David”
-      - run: semantic-release version<<# parameters.dryrun >> --noop<</ parameters.dryrun >>
-      - unless:
-          condition: << parameters.dryrun >>
-          steps:
-            - run: git push --follow-tags
+      - run: semantic-release version --noop
+      # - run: git push --follow-tags
   package-and-deploy:
     executor: python
     steps:
