@@ -3,10 +3,10 @@ version: 2.1
 workflows:
   main:
     jobs:
-      - pylama:
-      - isort:
-      - black:
-      - test:
+      - pylama
+      - isort
+      - black
+      - test
       - cut-release:
           requires:
             - pylama
