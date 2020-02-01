@@ -53,7 +53,6 @@ jobs:
     executor: python
     steps:
       - setup
-      - run: export e=$PYPI_TOKEN
       - run: isort --check-only --recursive .
   black:
     executor: python
