@@ -1,0 +1,89 @@
+version: 2.1
+
+workflows:
+  main:
+    jobs:
+      - pylama:
+      - isort:
+      - black:
+      - test:
+      - cut-release:
+          requires:
+            - pylama
+            - isort
+            - black
+            - test
+          filters:
+            branches:
+              only:
+                - master
+  publish:
+    jobs:
+      - package-and-deploy:
+          filters:
+            tags:
+              only: /^v.*/
+            branches:
+              ignore: /.*/
+      - build-and-deploy-docs:
+          filters:
+            branches:
+              only:
+                - master
+
+commands:
+  setup:
+    steps:
+      - checkout
+      - run: curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python
+      - run: poetry install
+
+jobs:
+  pylama:
+    executor: python
+    steps:
+      - setup
+      - run: pylama
+  isort:
+    executor: python
+    steps:
+      - setup
+      - run: isort --check-only --recursive .
+  black:
+    executor: python
+    steps:
+      - setup
+      - run: black --check .
+  test:
+    executor: python
+    steps:
+      - setup
+      - run: pytest -v --cov-report xml --cov-report html
+      - store_artifacts:
+          path: htmlcov
+  cut-release:
+    executor: python
+    parameters:
+      dryrun:
+        type: boolean
+        default: true
+    steps:
+      - setup
+      - run: git config user.email "hadrien@ectobal.com"
+      - run: git config user.name “Hadrien David”
+      - run: semantic-release version<<# parameters.dryrun >> --noop<</ parameters.dryrun >>
+      - unless:
+          condition: << parameters.dryrun >>
+          steps:
+            - run: git push --follow-tags
+  package-and-deploy:
+    executor: python
+    steps:
+      - setup
+      - run: poetry build
+      # - run: semantic-release changelog --post
+
+executors:
+  python:
+    docker:
+      - image: circleci/python:3.7
