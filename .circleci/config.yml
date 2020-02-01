@@ -10,12 +10,14 @@ workflows:
       - isort
       - black
       - test
+      - build
       - release:
           requires:
             - pylama
             - isort
             - black
             - test
+            - build
           filters:
             branches:
               only:
@@ -72,7 +74,13 @@ jobs:
           path: htmlcov
       - store_artifacts:
           path: test-results
-
+  build:
+    executor: python
+    steps:
+      - setup
+      - run: poetry build
+      - store_artifacts:
+          path: dist
 
   release:
     executor: python
