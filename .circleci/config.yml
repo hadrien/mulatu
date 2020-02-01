@@ -16,10 +16,10 @@ workflows:
             - isort
             - black
             - test
-          filters:
-            branches:
-              only:
-                - master
+          # filters:
+          #   branches:
+          #     only:
+          #       - master
 
 commands:
   setup:
@@ -76,14 +76,14 @@ jobs:
       - setup
       - run: git config user.email "hadrien@ectobal.com"
       - run: git config user.name “Hadrien David”
-      - run: semantic-release version --noop
+      - run: semantic-release version
       # - run: git push --follow-tags
   package-and-deploy:
     executor: python
     steps:
       - setup
       - run: poetry build
-      # - run: semantic-release changelog --post
+      - run: semantic-release changelog # --post
 
 executors:
   python:
