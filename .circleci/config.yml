@@ -58,6 +58,8 @@ jobs:
       - run: pytest -v --cov-report xml --cov-report html
       - store_artifacts:
           path: htmlcov
+      - codecov/upload:
+          file: {{ coverage_report_filepath }}
 
   release:
     executor: python
