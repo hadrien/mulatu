@@ -55,11 +55,16 @@ jobs:
     executor: python
     steps:
       - setup
-      - run: pytest -v --cov-report xml --cov-report html
-      - store_artifacts:
-          path: htmlcov
+      - run: pytest -v --cov-report xml --cov-report html --junitxml=junit.xml
       - codecov/upload:
           file: ./coverage.xml
+      - store_artifacts:
+          path: htmlcov
+      - store_test_results:
+          path: junit.xml
+      - store_artifacts:
+          path: junit.xml
+
 
   release:
     executor: python
