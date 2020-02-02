@@ -14,8 +14,8 @@ import pkg_resources
 from fastapi.openapi import models
 from mako.template import Template
 from prance import BaseParser as OpenAPIParser
-from structlog import get_logger
 from slugify import slugify
+from structlog import get_logger
 
 log = get_logger(__name__)
 
