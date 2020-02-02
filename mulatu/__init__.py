@@ -4,7 +4,7 @@ import io
 import sys
 from argparse import ArgumentParser, FileType
 from dataclasses import dataclass, field
-from typing import Callable, Dict, List, Optional, cast
+from typing import Callable, Dict, List, Optional
 
 from fastapi.openapi import models
 from prance import BaseParser as OpenAPIParser
