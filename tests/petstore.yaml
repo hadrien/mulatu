@@ -7,7 +7,7 @@ info:
 servers:
   - url: http://petstore.swagger.io/v1
 paths:
-  /pets:
+  /v1/pets:
     get:
       summary: List all pets
       operationId: listPets
@@ -53,7 +53,7 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Error"
-  /pets/{petId}:
+  /v1/pets/{petId}:
     get:
       summary: Info for a specific pet
       operationId: showPetById
