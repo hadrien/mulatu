@@ -44,6 +44,7 @@ commands:
           key: v{{ .Environment.CACHE_VERSION }}-poetry-{{ checksum "poetry.lock" }}
           paths:
             - ~/.cache
+            - ~/.local
 
 jobs:
   pylama:
