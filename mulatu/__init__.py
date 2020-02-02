@@ -5,7 +5,6 @@ from typing import List
 
 from fastapi.openapi import models
 from prance import BaseParser as OpenAPIParser
-
 from structlog import get_logger
 
 log = get_logger(__name__)
