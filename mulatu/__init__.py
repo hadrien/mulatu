@@ -1,7 +1,10 @@
+import io
 import sys
 from argparse import ArgumentParser, FileType
 from typing import List
 
+from fastapi.openapi import models
+from prance import BaseParser as OpenAPIParser
 from structlog import get_logger
 
 log = get_logger(__name__)
@@ -22,7 +25,15 @@ def new_args_parser() -> ArgumentParser:
 
 def run(argv: List[str]):
     parser = new_args_parser()
-    parser.parse_args(argv)
+    namespace = parser.parse_args(argv)
+    parse_openapi_spec(namespace.openapi_spec_stream)
+
+
+def parse_openapi_spec(openapi_spec_stream: io.TextIOBase) -> models.OpenAPI:
+    spec_string = openapi_spec_stream.read()
+    parser = OpenAPIParser(spec_string=spec_string)
+    spec = models.OpenAPI(**parser.specification)
+    return spec
 
 
 def main():

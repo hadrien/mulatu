@@ -7,6 +7,9 @@ authors = ["Hadrien David <hadrien@ectobal.com>"]
 [tool.poetry.dependencies]
 python = "^3.7"
 structlog = "^20.1.0"
+fastapi = "^0.47.1"
+prance = "^0.18.1"
+openapi-spec-validator = "^0.2.8"
 
 [tool.poetry.dev-dependencies]
 pytest-watch = "^4.2.0"
@@ -18,9 +21,9 @@ python-semantic-release = "^4.4.0"
 isort = "^4.3.21"
 pytest-cov = "^2.8.1"
 
+[tool.poetry.scripts]
+mulatu = "mulatu:main"
 [build-system]
 requires = ["poetry>=0.12"]
 build-backend = "poetry.masonry.api"
 
-[tool.poetry.scripts]
-mulatu = "mulatu:main"

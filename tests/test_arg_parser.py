@@ -8,7 +8,7 @@ def args_parser():
     return new_args_parser()
 
 
-def test_parse_args_with_spec_from_stdin(args_parser, petstore_stdin):
+def test_parse_args_with_spec_from_stdin(args_parser, petstore_spec_stdin):
     args_parser.parse_args(["petstore"])
 
 
