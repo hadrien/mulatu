@@ -1,0 +1,104 @@
+version: 2.1
+
+orbs:
+  codecov: codecov/codecov@1.0.2
+
+workflows:
+  main:
+    jobs:
+      - pylama
+      - isort
+      - black
+      - test
+      - build
+      - release:
+          requires:
+            - pylama
+            - isort
+            - black
+            - test
+            - build
+          filters:
+            branches:
+              only:
+                - master
+  publish:
+    jobs:
+      - publish:
+          filters:
+            tags:
+              only: /^v.*/
+            branches:
+              ignore: /.*/
+
+commands:
+  setup:
+    steps:
+      - checkout
+      - run: curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python
+      - restore_cache:
+          keys:
+            - v{{ .Environment.CACHE_VERSION }}-{{ checksum ".circleci/config.yml" }}-{{ checksum "poetry.lock" }}
+      - run: poetry install
+      - save_cache:
+          key: v{{ .Environment.CACHE_VERSION }}-{{ checksum ".circleci/config.yml" }}-{{ checksum "poetry.lock" }}
+          paths:
+            - ~/.cache
+            - ~/.local
+
+jobs:
+  pylama:
+    executor: python
+    steps:
+      - setup
+      - run: poetry run pylama
+  isort:
+    executor: python
+    steps:
+      - setup
+      - run: poetry run isort --check-only --recursive .
+  black:
+    executor: python
+    steps:
+      - setup
+      - run: poetry run black --check .
+  test:
+    executor: python
+    steps:
+      - setup
+      - run: poetry run pytest -v --cov-report xml --cov-report html --junitxml=test-results/pytest/results.xml
+      - codecov/upload:
+          file: ./coverage.xml
+      - store_test_results:
+          path: test-results
+      - store_artifacts:
+          path: htmlcov
+      - store_artifacts:
+          path: test-results
+  build:
+    executor: python
+    steps:
+      - setup
+      - run: poetry build
+      - store_artifacts:
+          path: dist
+  release:
+    executor: python
+    steps:
+      - setup
+      - run: git config user.email "hadrien@ectobal.com"
+      - run: git config user.name “Hadrien David”
+      - run: poetry run semantic-release version
+      - run: git push --follow-tags
+  publish:
+    executor: python
+    steps:
+      - setup
+      - run: poetry config pypi-token.pypi $PYPI_TOKEN
+      - run: poetry publish --build
+      - run: poetry run semantic-release changelog --post
+
+executors:
+  python:
+    docker:
+      - image: circleci/python:3.7
