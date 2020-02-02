@@ -8,7 +8,7 @@ import sys
 import tempfile
 from argparse import ArgumentParser, FileType
 from dataclasses import dataclass, field
-from typing import Dict, List, Optional, cast
+from typing import Callable, Dict, List, Optional, cast
 
 import pkg_resources
 from fastapi.openapi import models
@@ -101,6 +101,11 @@ class Resource:
         result: List[Resource] = []
         self.walk(result.append)
         return result
+
+    def walk(self, on_resource: Callable[[Resource], None]):
+        on_resource(self)
+        for resource in self.resources.values():
+            resource.walk(on_resource)
 
     def is_pattern(self) -> bool:
         return bool(re.match("{.*}", self.name))
