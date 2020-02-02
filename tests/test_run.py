@@ -10,12 +10,6 @@ def sys_argv(monkeypatch):
     yield argv
 
 
-def test_run(petstore_spec_stdin):
-    from mulatu import run
-
-    run(["petstore"])
-
-
 def test_main(sys_argv, petstore_spec_stdin):
     from mulatu import main
 
