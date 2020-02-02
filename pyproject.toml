@@ -2,7 +2,10 @@
 name = "mulatu"
 version = "0.1.0"
 description = ""
+license = "MIT"
 authors = ["Hadrien David <hadrien@ectobal.com>"]
+readme = "README.md"
+repository = "https://github.com/hadrien/mulatu"
 
 [tool.poetry.dependencies]
 python = "^3.7"
