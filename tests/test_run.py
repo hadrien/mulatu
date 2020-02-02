@@ -10,17 +10,17 @@ def sys_argv(monkeypatch):
     yield argv
 
 
-def test_run(petstore_stdin):
+def test_run(petstore_spec_stdin):
     from mulatu import run
 
     run(["petstore"])
 
 
-def test_main(sys_argv, petstore_stdin):
+def test_main(sys_argv, petstore_spec_stdin):
     from mulatu import main
 
     main()
 
 
-def test_command_line(sys_argv, petstore_stdin):
+def test_command_line(sys_argv, petstore_spec_stdin):
     subprocess.run(["mulatu", "petstore"])
