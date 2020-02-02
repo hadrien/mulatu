@@ -82,13 +82,8 @@ jobs:
       - run: poetry build
       - store_artifacts:
           path: dist
-
   release:
     executor: python
-    parameters:
-      dryrun:
-        type: boolean
-        default: true
     steps:
       - setup
       - run: git config user.email "hadrien@ectobal.com"
