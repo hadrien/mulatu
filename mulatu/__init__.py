@@ -54,9 +54,10 @@ def parse_openapi_spec(openapi_spec_stream: io.TextIOBase) -> models.OpenAPI:
 
 
 @dataclass
-class Operation:
-    doc: str = field(repr=False)
+class Method:
     verb: str
+    resource: Resource = field(repr=False)
+    operation: models.Operation = field(repr=False)
 
 
 @dataclass
@@ -67,7 +68,7 @@ class Resource:
     resources: Dict[str, Resource] = field(
         init=False, default_factory=lambda: {}, repr=False
     )
-    operations: Dict[str, Operation] = field(
+    methods: Dict[str, Method] = field(
         init=False, default_factory=lambda: {}, repr=False
     )
 
@@ -121,20 +122,22 @@ class Resource:
         log.debug("add resource", resource=resource)
         if path_item:
             for verb in "delete get patch post put".split():
-                op: models.Operation = getattr(path_item, verb)
-                if op is None:
+                operation: models.Operation = getattr(path_item, verb)
+                if operation is None:
                     continue
-                resource.add_operation(op, verb)
+                resource.add_method(verb, operation)
         return resource
 
-    def add_operation(self, op: models.Operation, verb: str) -> Operation:
-        description: str = op.description or ""
-        operation = Operation(description, verb)
-        self.operations[verb] = operation
+    def add_method(self, verb: str, operation: models.Operation) -> Method:
+        method = Method(self, verb, operation)
+        self.methods[verb] = operation
         log.debug(
-            "new operation", verb=verb, operation_id=op.operationId, operation=operation
+            "new http method",
+            verb=verb,
+            operation_id=operation.operationId,
+            method=method,
         )
-        return operation
+        return method
 
 
 class Root(Resource):
