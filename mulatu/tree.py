@@ -1,13 +1,12 @@
 from __future__ import annotations
 
 import re
-
 from dataclasses import dataclass, field
+from typing import Callable, Dict, List, Optional, cast
+
 from fastapi.openapi import models
 from slugify import slugify
 from structlog import get_logger
-from typing import Callable, Dict, List, Optional, cast
-
 
 log = get_logger(__name__)
 
