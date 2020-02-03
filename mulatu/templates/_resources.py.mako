@@ -28,6 +28,4 @@ class ${resource.class_name}(Resource):
         % endif
     % endfor
 
-
-
 % endfor
