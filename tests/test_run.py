@@ -16,5 +16,5 @@ def test_main(sys_argv, petstore_spec_stdin):
     main()
 
 
-def test_command_line(sys_argv, petstore_spec_stdin):
-    subprocess.run(["mulatu", "petstore"])
+def test_command_line():
+    subprocess.run(["mulatu", "-h"])
